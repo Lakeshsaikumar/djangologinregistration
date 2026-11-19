@@ -5,6 +5,7 @@
 
 
 
+
 trigger:
 - master
 
@@ -18,13 +19,12 @@ steps:
     architecture: 'x64'
 
 - script: |
-    python --version
     python -m pip install --upgrade pip
     pip install -r requirements.txt
-  displayName: 'Install Django dependencies'
+  displayName: 'Install prerequisites'
 
 - script: |
-    python manage.py check
+    python -W ignore::DeprecationWarning manage.py check
   displayName: 'Validate Django application'
 
 - task: ArchiveFiles@2
@@ -34,10 +34,11 @@ steps:
     archiveType: zip
     archiveFile: '$(Build.ArtifactStagingDirectory)/django-app.zip'
     replaceExistingArchive: true
+  displayName: 'Create deployment ZIP'
 
 - task: PublishBuildArtifacts@1
   inputs:
     PathtoPublish: '$(Build.ArtifactStagingDirectory)/django-app.zip'
     ArtifactName: drop
     publishLocation: Container
-  displayName: 'Publish deployment artifact'
+  displayName: 'Publish artifact'
