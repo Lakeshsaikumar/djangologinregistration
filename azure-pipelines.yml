@@ -4,6 +4,7 @@
 # https://docs.microsoft.com/azure/devops/pipelines/languages/python
 
 
+
 trigger:
 - master
 
@@ -13,13 +14,18 @@ pool:
 steps:
 - task: UsePythonVersion@0
   inputs:
-    versionSpec: '3.11'
+    versionSpec: '3.10'
+    architecture: 'x64'
 
 - script: |
+    python --version
     python -m pip install --upgrade pip
     pip install -r requirements.txt
+  displayName: 'Install Django dependencies'
+
+- script: |
     python manage.py check
-  displayName: 'Install and validate Django'
+  displayName: 'Validate Django application'
 
 - task: ArchiveFiles@2
   inputs:
@@ -28,11 +34,10 @@ steps:
     archiveType: zip
     archiveFile: '$(Build.ArtifactStagingDirectory)/django-app.zip'
     replaceExistingArchive: true
-  displayName: 'Create deployment package'
 
 - task: PublishBuildArtifacts@1
   inputs:
     PathtoPublish: '$(Build.ArtifactStagingDirectory)/django-app.zip'
-    ArtifactName: 'drop'
-    publishLocation: 'Container'
-  displayName: 'Publish build artifact'
+    ArtifactName: drop
+    publishLocation: Container
+  displayName: 'Publish deployment artifact'
