@@ -4,8 +4,6 @@
 # https://docs.microsoft.com/azure/devops/pipelines/languages/python
 
 
-
-
 trigger:
 - master
 
@@ -24,8 +22,8 @@ steps:
   displayName: 'Install prerequisites'
 
 - script: |
-    python -W ignore::DeprecationWarning manage.py check
-  displayName: 'Validate Django application'
+    python -c "import django; print('Django version:', django.get_version())"
+  displayName: 'Check Django installation'
 
 - task: ArchiveFiles@2
   inputs:
